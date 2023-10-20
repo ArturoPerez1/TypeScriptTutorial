@@ -294,6 +294,24 @@ pokedex.pokemon.forEach((element) => {
     console.log(element)
 })
 
+/*La intersection type consiste en intersectar dos tipos completamente distintos para
+obtener un nuevo tipo con lo que tenian los otros dos tipos 
+
+ejemplo
+
+type Persona = {
+    name: string
+    age: number
+}
+type Estudiante = {
+    id: number
+    levelStudy: string
+}
+
+type Colegio = Persona&Estudiante  
+//esta sería la interseccion, también la puedes hacer para unir los tipos en una variable
+
+*/
 /*------------------------- */
 
 
