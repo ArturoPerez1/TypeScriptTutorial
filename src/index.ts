@@ -230,7 +230,8 @@ en producción no se van a ver reflejados en ninguna parte */
 
 /*---------------------------------------------- */
 
-/*------Union types--------*/
+/*------Union types e Intersection Types--------*/
+
 type PokemonPowers = {
     attacks: string
     damageAttack: number
@@ -242,6 +243,10 @@ type Pokemon = {
     coach: string
     pokemonPowers: PokemonPowers
 }
+
+type Pokedex = {
+    pokemon : Pokemon[]
+} 
 
 function createPokemon(pokemon: Pokemon): Pokemon {
     const { name, levelLife, elementType, coach, pokemonPowers } = pokemon
@@ -266,16 +271,29 @@ const Piplut = createPokemon({
     }
 })
 
-console.log(`Pokémon ={
-    name: ${Piplut.name},
-    levelLike: ${Piplut.levelLife}
-    elementType: ${Piplut.elementType}
-    coach: ${Piplut.coach}
-    pokemonPowers:{
-        attacks: ${Piplut.pokemonPowers.attacks}
-        damageAttack: ${Piplut.pokemonPowers.damageAttack}
+const Pikachu = createPokemon({
+    name: 'Pikachu',
+    levelLife: 150,
+    elementType: 'TRUENO',
+    coach: 'Ash',
+    pokemonPowers:
+    {
+        attacks: 'AttackTrueno',
+        damageAttack: 90
     }
-}`)
+})
+
+const pokedex: Pokedex = {
+    pokemon: [],
+}
+pokedex.pokemon.push(Piplut)
+pokedex.pokemon.push(Pikachu)
+
+console.log(`\nPOKEDEX => POKÉMONS:`)
+pokedex.pokemon.forEach((element) => {
+    console.log(element)
+})
+
 /*------------------------- */
 
 
