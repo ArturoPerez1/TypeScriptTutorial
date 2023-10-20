@@ -231,7 +231,51 @@ en producción no se van a ver reflejados en ninguna parte */
 /*---------------------------------------------- */
 
 /*------Union types--------*/
+type PokemonPowers = {
+    attacks: string
+    damageAttack: number
+}
+type Pokemon = {
+    name: string
+    levelLife: number
+    elementType: 'ROCA' | 'VIENTO' | 'TRUENO' | 'AGUA' //Esta es una union type
+    coach: string
+    pokemonPowers: PokemonPowers
+}
 
+function createPokemon(pokemon: Pokemon): Pokemon {
+    const { name, levelLife, elementType, coach, pokemonPowers } = pokemon
+    return {
+        name,
+        levelLife,
+        elementType,
+        coach,
+        pokemonPowers
+    }
+}
+
+const Piplut = createPokemon({
+    name: 'Piplut',
+    levelLife: 150,
+    elementType: 'AGUA',
+    coach: 'Maya',
+    pokemonPowers:
+    {
+        attacks: 'Pistola de Agua',
+        damageAttack: 50
+    }
+})
+
+console.log(`Pokémon ={
+    name: ${Piplut.name},
+    levelLike: ${Piplut.levelLife}
+    elementType: ${Piplut.elementType}
+    coach: ${Piplut.coach}
+    pokemonPowers:{
+        attacks: ${Piplut.pokemonPowers.attacks}
+        damageAttack: ${Piplut.pokemonPowers.damageAttack}
+    }
+}`)
 /*------------------------- */
 
 
