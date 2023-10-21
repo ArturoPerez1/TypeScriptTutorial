@@ -245,8 +245,8 @@ type Pokemon = {
 }
 
 type Pokedex = {
-    pokemon : Pokemon[]
-} 
+    pokemon: Pokemon[]
+}
 
 function createPokemon(pokemon: Pokemon): Pokemon {
     const { name, levelLife, elementType, coach, pokemonPowers } = pokemon
@@ -314,5 +314,69 @@ type Colegio = Persona&Estudiante
 */
 /*------------------------- */
 
+/*------------Type Indexing-------- */
+//Ejemplo 1 --Extraemos una propiedad específica del tipo
+type AnimalProperties = {
+    typeAnimal: {
+        acuatico: boolean,
+        terrestre: boolean,
+        aereo: boolean
+    },
+    name: string
+}
+
+const animalType: AnimalProperties['typeAnimal'] = {
+    acuatico: false,
+    terrestre: false,
+    aereo: true
+}
+
+//Ejemplo 2 --Type from value
+const typeAnimal = {
+    acuatico: false,
+    terrestre: true,
+    aereo: true
+}
+
+type TypeAnimal = typeof typeAnimal //-- el tipo TypeAnimal va a tener por propiedades los tipos de la constante typeAnimal
+
+const DogType: TypeAnimal = {
+    acuatico: false,
+    terrestre: true,
+    aereo: false
+}
+
+//Ejemplo 3 -- type from function return
+
+function createTypeAnimal() {
+    return {
+        acuatico: false,
+        terrestre: true,
+        aereo: true
+    }
+}
+
+type TypeAnimal1 = ReturnType<typeof createTypeAnimal> //--Recupera el tipo de lo que devuelve la función 
+
+/*--------------------------------- */
+
+/*-----------Arrays---------------*/
+const languages: (string | number)[] = []
+languages.push('Array')
+
+type CellValue = 'X'| 'O'| ''
+type GameBoar =[
+    [CellValue,CellValue,CellValue],
+    [CellValue,CellValue,CellValue],
+    [CellValue,CellValue,CellValue]
+]
+
+const gameBoard: GameBoar = [
+    ['X','O',''],
+    ['X','O',''],
+    ['X','O','']
+]
+
+/*-------------------------------- */
 
 
