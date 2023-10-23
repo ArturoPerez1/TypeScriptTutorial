@@ -18,8 +18,8 @@ class Rectagulo {
 
     /*
         * Uso del readonly ejemplo():
-        readonly ancho: number
-        readonly alto: number
+        *readonly ancho: number
+        *readonly alto: number
         *Este modificador permite que las variable sean visibles desde fuera
         *de la clase pero que no sean modificables, al igual que dentro de la clase
         *no se podrá modificar estas variables
@@ -75,8 +75,10 @@ console.log(`El nombre del rectángulo es:  ${rectangulo.getNombre}`) // En esta
 
 //Ejemplo 2: Todos los conceptos hasta abstract y protected
 
-/*Una clase abstracta es aquella que se utiliza para dar una gerarquía de 
-herencia pero la misma no podrá ser instanciada */
+/*
+*Una clase abstracta es aquella que se utiliza para dar una gerarquía de 
+*herencia pero la misma no podrá ser instanciada 
+*/
 abstract class Vehiculo {
     protected fabricante: string
     /*
@@ -92,7 +94,7 @@ abstract class Vehiculo {
         console.log(`El vehiculo ${this.fabricante} se ha movido magicamente`)
     }
 
-    protected llevarAlTaller(){
+    protected llevarAlTaller() {
         console.log(`Al taller que va`)
     }
 }
@@ -110,7 +112,7 @@ class VehiculoTerrestre extends Vehiculo {
         super.moverse()
     }
 
-    reparar(){
+    reparar() {
         console.log(`Un momento que me leo el manual de instrucciones de ${this.fabricante}`)
     }
 }
@@ -123,20 +125,224 @@ class VehiculoAcuatico extends Vehiculo {
 
 class VehiculoAereo extends Vehiculo {
     moverse() {
-        console.log("popopopo")     
+        console.log("popopopo")
     }
 
-    reparar(){
+    reparar() {
         this.llevarAlTaller()
     }
 }
 
 console.log("\n")
 
-let vehiculoTerrestre = new VehiculoTerrestre("Auto","Toyota")
+let vehiculoTerrestre = new VehiculoTerrestre("Auto", "Toyota")
 vehiculoTerrestre.reparar()
 
 let vehiculoAero = new VehiculoAereo("Toyota")
 vehiculoAero.reparar()
 
 //*-------------------------------------
+
+//*Tipos literales---------------------
+
+/*
+*Los tipos literales consisten en que pueden aceptar un único valor dentro 
+*de los tipos definidos.
+
+*Esto quiere decir que el valor que puede recibir tiene que ser igual al tipo asignado
+
+*Algunos tipos literales por defecto serían (undefined y null)
+*/
+
+//Ejemplos:
+
+let vardadera: true = true
+let numero: 1 = 1
+let cadena: "Arturo" = "Arturo"
+
+let posibleCadena: 'Arturo' | 'Angel' | 'Wilmer'
+posibleCadena = 'Wilmer'
+
+/*
+!Ejemplo de error: si tipeas una variable como literal, entonces el valor que puede
+!la variable es único o sea no puedes tratar de asignarle a la variable posibleCadena
+!el string 'Belkys' puesto que ese valor no está definido dentro del tipo literal
+*/
+
+/*
+*Importante, si utilizamos const como forma de definir una variable entonces le estamos
+*diciendo al compilador que infiera de manera estricta el tipo de dato de la varible un caso de 
+*esto son los siguientes:
+*/
+
+const permiso = true
+const numeroConst = 1
+const cadenasConst = 'Estres' //todo> Importante: hay que tener en cuenta que en este caso 
+//todo> las union types no aplican porque no se permitiría debido al const
+
+//*------------------------------------
+
+//*Union types----------------------
+//todo: este tipo de uniones también se pueden usar en funciones para definir el valor de retorno
+//Ejemplo:
+
+function convertir(valor: string | number) {
+    //*Para que typescrit pueda diferenciar entre strign y number hay que hacer lo siguiente
+    if (typeof (valor) === "string") {
+        console.log(valor.length)
+    } else if (typeof (valor) === "number") {
+        console.log(valor)
+    }
+}
+
+//*Union types(Campos discriminantes)
+//Ejemplo:
+
+type OperacionSuma = {
+    sumando1: number,
+    sumando2: number,
+    tipo: 'suma'
+}
+
+type OperacionMultiplicar = {
+    operando1: number,
+    operando2: number,
+    tipo: 'multiplicar'
+}
+
+type Operacion = OperacionSuma | OperacionMultiplicar
+
+function operar(o: Operacion): number | undefined {
+    if (o.tipo == "suma") {
+        return (o.sumando1 + o.sumando2)
+    } else if (o.tipo == "multiplicar") {
+        return (o.operando1 * o.operando2)
+    }
+
+    return undefined
+}
+
+console.log(operar({ sumando1: 2, sumando2: 3, tipo: 'suma' }))
+
+//*----------------------------------
+
+//*Intersection types-------------
+
+type Coordenada = [x: number, y: number]
+type Vector = [x: number, y: number]
+
+type Posicionable = {
+    posicion: Coordenada
+}
+
+type Movible = {
+    velocidad: Vector
+    aceleracion: Vector
+}
+
+type MovibleYPosicinable = Movible & Posicionable
+
+//*Al volverse una intersección, typescript necesita que si definimos un objeto del tipo 
+//*intersección llenemos todos los campos de las propiedades 
+//*definidas en cada tipó de la intersección
+
+let obj: MovibleYPosicinable = {
+    posicion: [5, 5],
+    velocidad: [5, 6],
+    aceleracion: [5, 7]
+}
+//*-------------------------------
+
+//*Interfaces---------------------
+/*
+*Una interfaz es una especie de especificación o contrato,
+*cuando creamos una interfaz lo que hacemos es declarar tipo
+*en el cual tenemos unos ciertos aspectos que queremos que en algunos 
+*objetos que definamos de ese tipo tengan.
+*/
+
+//Ejemplo:
+
+//*Modificadores en las interfaces(readonly)
+
+/*
+Pilas con el readonly en especial en los tipos estructura como los objetos,
+si colocamos readonly a un objeto solo estariamos restringiendo la modificación del objeto
+en general no de las propiedades. 
+
+!Ejemplo: {
+! type Personal = {
+!   readonly personal: {
+!           name: string,
+!           email: string
+!       }
+!}
+
+!podríamos modificar name y email haciendo lo siguiente
+!let personal : Personal = { //Asignamos el valor usando la estructura de objeto la cual solo podremos modificar una vez debido al readonly
+!    personal : {
+!        name: "Arturo",
+!        email: "arjperez31@gmail.com"
+!    }
+!}
+!personal.personal.name = "Angel" //Aqui estaríamos modificando la propiedad la cual no daría error porque el readonly solo afecta a la estructura no a la propiedad
+!
+!}
+
+
+*/
+
+interface UserData {
+    readonly username: string,
+    created_at: Date,
+    superuser: boolean
+    readonly personal: {
+        name: string,
+        email: string
+    }
+
+    logout(): void,
+    rename: (username: string) => void
+}
+
+function login(): UserData {
+    return {
+        username: 'admin',
+        created_at: new Date(),
+        superuser: true,
+        personal:{
+            name: "Arturo",
+            email: "arjperez31@gmail.com"
+        },
+        logout() {
+            console.log("Adios")
+        },
+        rename(username) {
+            console.log('TODO: Rename account')
+        }
+    }
+}
+
+let data = login()
+
+type Personal = {
+    readonly personal: {
+        name: string,
+        email: string
+    }
+}
+
+let personal : Personal = {
+    personal : {
+        name: "Arturo",
+        email: "arjperez31@gmail.com"
+    }
+}
+
+personal.personal.name = "Angel"
+
+
+
+
+
+//*-------------------------------

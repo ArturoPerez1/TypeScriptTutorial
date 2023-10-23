@@ -360,7 +360,7 @@ type TypeAnimal1 = ReturnType<typeof createTypeAnimal> //--Recupera el tipo de l
 
 /*--------------------------------- */
 
-/*-----------Arrays---------------*/
+/*-----------Arrays y tuplas---------------*/
 const languages: (string | number)[] = []
 languages.push('Array')
 
