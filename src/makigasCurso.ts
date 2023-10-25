@@ -263,7 +263,7 @@ let obj: MovibleYPosicinable = {
 
 //Ejemplo:
 
-//*Modificadores en las interfaces(readonly)
+//*Modificadores en las interfaces(readonly, ? --> atributos opcionales)
 
 /*
 Pilas con el readonly en especial en los tipos estructura como los objetos,
@@ -294,7 +294,7 @@ en general no de las propiedades.
 
 interface UserData {
     readonly username: string,
-    created_at: Date,
+    created_at?: Date,
     superuser: boolean
     readonly personal: {
         name: string,
@@ -310,7 +310,7 @@ function login(): UserData {
         username: 'admin',
         created_at: new Date(),
         superuser: true,
-        personal:{
+        personal: {
             name: "Arturo",
             email: "arjperez31@gmail.com"
         },
@@ -325,24 +325,188 @@ function login(): UserData {
 
 let data = login()
 
-type Personal = {
-    readonly personal: {
-        name: string,
-        email: string
+//-------Operaciones equivalentes con atributos opcionales
+if (data.created_at) {
+    let time = data.created_at.getTime
+    console.log(time)
+}
+//*El if y el operador ? serían equivalentes en este caso puesto que te permiten usar las propiedades del atributo de tipo Date
+let seconds = data.created_at?.getSeconds
+//--------
+
+//*Interfaces usadas en clases
+
+interface Shape {
+    readonly sides: number,
+    area(): number
+    perimeter(): number
+}
+
+//*Independientemente de que le estemos pasando una instancia de la clase Rectangle a la función, esta no podrá acceder a los atributos de la clase puesto que a esta solo le interesa lo que tenga la interfaz Shape
+function process(s: Shape) {
+    console.log({ area: s.area() })
+}
+
+
+//*La clase sería una Shape por eso es que al declarar una instancia de la clase Rectangle facilmente podemos pasarla como parámetro de la función process()
+class Rectangle implements Shape {
+    sides: number = 4
+
+    constructor(readonly width: number, readonly heigth: number) {
+
+    }
+
+    area(): number {
+        return (this.width * this.heigth)
+    }
+
+    perimeter(): number {
+        return ((2 * this.width) + (2 * this.heigth))
     }
 }
 
-let personal : Personal = {
-    personal : {
-        name: "Arturo",
-        email: "arjperez31@gmail.com"
+let rectangle = new Rectangle(5, 2)
+process(rectangle)
+
+//*Especialización --> Herencia en interfaces 
+interface InterfaceVehiculo {
+    readonly fabricante: string,
+    arracarMotor(): void,
+    repostar(): void,
+    detenerMotor(): void
+}
+
+interface InterfaceVehiculoT extends InterfaceVehiculo {
+    conducir(): void
+}
+
+interface InterfaceVehiculoA extends InterfaceVehiculo {
+    sonarSirena(): void,
+    encenderChimenea(): void
+    detenerChimenea(): void
+}
+
+class OpelCorsa implements InterfaceVehiculoT {
+    fabricante: string = "Opel"
+
+    conducir(): void {
+        console.log("brum brum")
+    }
+
+    arracarMotor(): void {
+        console.log("turururururur")
+    }
+
+    repostar(): void {
+        console.log("Echando 20$ de gasolina")
+    }
+
+    detenerMotor(): void {
+        console.log("tururur........")
     }
 }
 
-personal.personal.name = "Angel"
+//*Interfaces con índice --> Tipos Raros
+
+interface Indizable {
+    [/*Parámetro índice*/ index: number]: boolean
+}
+
+let l: Indizable = {}
+let k = l[4]
+
+//*Funciones y tipos híbridos
+
+//Aquí se habla de un tipo híbrido porque cualquier varibale de tipo Comparator puede usar la propiedad de tipo función o una simple
+interface Comparator {
+    (first: string, second: string): number
+    algorithm: string
+}
+
+function sort(c: Comparator) {
+    let out = c("first", "second")
+}
 
 
 
-
-
+//Nota: basicamente todo lo que estamos haciendo con las interfaces lo podemos hacer con type alias
+//Nota: en typescript undefined evalua a false dentro de un if así que puedes usarlo como criterio de entrada.
 //*-------------------------------
+
+//*Casteo con as
+
+interface Geometria {
+    lados: number
+    pintar():void
+}
+
+interface Triangulo extends Geometria {
+    base: number,
+    altura: number
+}
+
+interface Cuadrado extends Geometria{
+    lado: number
+}
+
+function procesar(g: Geometria){
+    if(g.lados == 4 ){
+        let cuadrado =  g as Cuadrado //Me está devolviendo una geometría pero de tipo Caudrado o sea quiere decir que está bajando en la jerarquía
+        console.log(cuadrado.lado)
+    }else if (g.lados == 3){
+        let triangulo = g as Triangulo
+        console.log(`${triangulo.base} ${triangulo.altura}`)
+    }
+}
+
+//*Formas de tener un casteo más seguro(instanceof(Aplica solo para objetos) y guards(Aplican a interfaces)) 
+
+//Los Guards son casteo en tiempo de ejecución que nos ayudaran a castear de forma más segura si una estructura es de un tipo o de otra
+
+function esUnaGeometria(x: any): x is Geometria{
+    return x.lados && x.pintar
+}
+
+function esUnCuadrado(x: any): x is Cuadrado { 
+    return esUnaGeometria(x) && (x as any).lado
+}
+
+function esUnTriangulo(x: any): x is Triangulo {
+    return esUnaGeometria(x) && (x as any).lado && (x as any).base  && (x as any).altura
+}
+
+function procesar1(g: Geometria){
+    if(esUnCuadrado(g)){
+        console.log(g.lado)
+    }else if(esUnTriangulo(g)){
+        console.log(`${g.base} ${g.altura}`)
+    }
+}
+
+/* 
+*Enums: Los enums son una forma de limitar los valores que puede tener una variable en concreto
+*Además cada parte del enum tendrá su propio índice el cual podemos dejar que typescript los asigne o
+*nosotros mismo los creamos sin más, puedes usar string o numbers. Ten en cuenta que cuando usas strings
+*tienes que colocarle a todos un valor, pero si usas numbers se creará una secuencia
+*/
+const enum DiaSemana {
+    Lunes,
+    Martes,
+    Miercoles,
+    Jueves,
+    Viernes,
+    Sabado,
+    Domingo
+}
+
+interface CitaMedica{
+    dia: DiaSemana
+}
+
+let c: CitaMedica = {
+    dia: DiaSemana.Lunes
+}
+
+
+
+//*-----------------------------
